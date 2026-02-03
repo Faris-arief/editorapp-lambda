@@ -1,5 +1,4 @@
-const { ApiService } = require("../utils");
-const { sendWhatsAppMessage } = require("../services");
+const { sendWhatsAppMessage, ApiService } = require("../services");
 
 /**
  * Reminders Lambda Function

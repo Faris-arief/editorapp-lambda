@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const HttpClient = require('../services/httpClient');
+const HttpClient = require('../utils/httpClient');
 const AuthService = require('./authService');
 
 /**

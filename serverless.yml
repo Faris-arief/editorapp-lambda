@@ -36,10 +36,9 @@ functions:
     description: Fetches available reminders for all clients
     timeout: 60
     events:
-      - http:
-          path: /reminders
-          method: GET
-          cors: true
+      - schedule:
+          rate: cron(0 12 * * ? *)
+          enabled: false
 
 plugins:
   - serverless-offline

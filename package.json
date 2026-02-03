@@ -1,0 +1,47 @@
+{
+  "name": "editorapp-lambda",
+  "version": "1.0.0",
+  "description": "Serverless Framework AWS Lambda project with EventBridge cron jobs",
+  "main": "src/handlers/index.js",
+  "scripts": {
+    "dev": "serverless offline",
+    "deploy": "serverless deploy",
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "serverless deploy --stage prod",
+    "remove": "serverless remove",
+    "logs": "serverless logs -f",
+    "invoke": "serverless invoke -f",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/client-ses": "^3.490.0",
+    "aws-lambda": "^1.0.7",
+    "dotenv": "^17.2.3",
+    "joi": "^17.11.0",
+    "twilio": "^5.12.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.131",
+    "@types/node": "^20.10.5",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "serverless": "^3.38.0",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^13.3.0"
+  },
+  "keywords": [
+    "serverless",
+    "aws",
+    "lambda",
+    "eventbridge",
+    "cron",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT"
+}

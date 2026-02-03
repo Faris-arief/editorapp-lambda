@@ -1,0 +1,51 @@
+service: editorapp-lambda
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  region: ap-southeast-1
+  stage: ${opt:stage, 'dev'}
+  memorySize: 256
+  timeout: 60
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    # SSM Parameters
+    TWILIO_ACCOUNT_SID: ${ssm:/editorapp/${self:provider.stage}/twilio/account-sid}
+    TWILIO_AUTH_TOKEN: ${ssm:/editorapp/${self:provider.stage}/twilio/auth-token}
+    TWILIO_WHATSAPP_FROM: ${ssm:/editorapp/${self:provider.stage}/twilio/whatsapp-from}
+    TWILIO_TEMPLATE_SID: ${ssm:/editorapp/${self:provider.stage}/twilio/template-sid}
+    AUTH_EMAIL: ${ssm:/editorapp/${self:provider.stage}/auth/email}
+    AUTH_PASSWORD: ${ssm:/editorapp/${self:provider.stage}/auth/password}
+    API_BASE_URL: ${ssm:/editorapp/${self:provider.stage}/api/base-url}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+
+functions:
+  reminders:
+    handler: src/handlers/reminderCron.handler
+    description: Fetches available reminders for all clients
+    timeout: 60
+    events:
+      - http:
+          path: /reminders
+          method: GET
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002

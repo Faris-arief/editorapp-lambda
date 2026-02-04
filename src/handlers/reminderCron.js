@@ -1,5 +1,18 @@
 const { sendWhatsAppMessage, ApiService } = require("../services");
+const moment = require("moment");
 
+// ...existing code...
+
+        bookings.forEach(booking => {
+          const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name
+          const bookingTime = moment.utc(booking.startTime).tz(timeZone);
+          const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A"); // e.g., "05/02/2026 2:00 PM"
+
+          contactArray.push(personInCharge)
+          dateArray.push(formattedDate)
+        })
+
+// ...existing code...
 /**
  * Reminders Lambda Function
  * Gets available reminders for all clients

@@ -38,9 +38,9 @@ exports.handler = async (event, context) => {
         const settingList = settingsResponse.data.data || [];
 
 
-        const timeZone = settingList.find(x=> x.key === 'timeZone')?.value || 'Asia/Kuala_Lumpur';
-        const salonName = settingList.find(x=> x.key === 'salonName')?.value || 'The Editor Salon';
-        const phoneNumber = settingList.find(x=> x.key === 'phoneNumber')?.value ?? '';
+        const timeZone = settingList.find(x=> x.id === 'timeZone')?.value || 'Asia/Kuala_Lumpur';
+        const salonName = settingList.find(x=> x.id === 'salonName')?.value || 'The Editor Salon';
+        const phoneNumber = settingList.find(x=> x.id === 'phoneNumber')?.value ?? '';
 
         const bookingList = bookingResponse.data.data || [];
         const bookingMap = {};
@@ -111,14 +111,17 @@ exports.handler = async (event, context) => {
       }
     }
 
+    // Check if any client had errors
+    const hasErrors = Object.values(remindersData).some(r => r.success === false);
+    
     return {
-      statusCode: 200,
+      statusCode: hasErrors ? 500 : 200,
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
-        message: "ok",
+        message: hasErrors ? "Some reminders failed to send" : "ok",
         timestamp: new Date().toISOString(),
         authenticated: true,
         clients: clients,
@@ -127,7 +130,6 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error("Error in reminders handler:", error.message);
-
     return {
       statusCode: 500,
       headers: {
@@ -135,11 +137,9 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
-        message: "error",
-        timestamp: new Date().toISOString(),
-        authenticated: false,
+        message: "Internal server error",
         error: error.message,
-        clients: clients,
+        timestamp: new Date().toISOString(),
       }),
     };
   }

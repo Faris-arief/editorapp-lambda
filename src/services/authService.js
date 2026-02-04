@@ -38,6 +38,7 @@ class AuthService {
       );
 
       console.log("Sign-in response status:", response.status);
+      console.log("Sign-in response data:", response.data);
 
       // Check if request was successful
       if (response.status !== 200) {

@@ -25,14 +25,28 @@ exports.handler = async (event, context) => {
       try {
         console.log(`Fetching reminders for client: ${client}`);
 
-        const response = await apiService.request(
+        const bookingResponse = await apiService.request(
           `https://editorapp-be.fly.dev/api/${client}/bookings/remindersAvailable`,
           {
             method: "GET",
           },
         );
 
-        const bookingList = response.data || [];
+        const settingsResponse = await apiService.request(
+          `https://editorapp-be.fly.dev/api/${client}/settings`,
+          {
+            method: "GET",
+          },
+        );
+
+        const settingList = settingsResponse.data.data || [];
+
+
+        const timeZone = settingList.find(x=> x.key === 'timeZone')?.value || 'Asia/Kuala_Lumpur';
+        const salonName = settingList.find(x=> x.key === 'salonName')?.value || 'The Editor Salon';
+        const phoneNumber = settingList.find(x=> x.key === 'phoneNumber')?.value ?? '';
+
+        const bookingList = bookingResponse.data.data || [];
         const bookingMap = {};
 
         bookingList.forEach((booking) => {
@@ -45,24 +59,51 @@ exports.handler = async (event, context) => {
 
         const promisesToBeDone = Object.keys(bookingMap).map(async x=> {
             const bookings = bookingMap[x];
-            if()
+            const requestBody = {};
+            const bookingCount = bookings.length;
+            if(bookingCount){
+              requestBody[1] = `${bookings[0].name}${bookingCount > 1 ? ` (${bookingCount})` : ''}`;
+            }
 
+            const dateArray = [];
+            const contactArray = [];
 
+            bookings.forEach(booking => {
+              const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name
+              const bookingTime = moment.utc(bookings[0].startTime).tz(timeZone);
+              const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A"); 
+              contactArray.push(personInCharge)
+              dateArray.push(formattedDate)
+            })
+
+            distinctDates = [...new Set(dateArray)];
+            distinctContacts = [...new Set(contactArray)];
+            const dateTemplate = `${distinctDates.join(' and')}`;
+            const contactTemplate = `${distinctContacts.join(' and')}`;
+
+            requestBody[2] = salonName;
+            requestBody[3] = dateTemplate;
+            requestBody[4] = contactTemplate;
+            requestBody[5] = phoneNumber;
+            await sendWhatsAppMessage(booking.phoneNumber, requestBody)
         })
 
-        const reminders = await Promise.all(promisesToBeDone);
+        await Promise.all(promisesToBeDone);
 
         const response = await apiService.request(
           `https://editorapp-be.fly.dev/api/${client}/bookings/updateReminderSent`,
           {
             method: "POST",
             body: {
-                bookingList: bookingList.map(x=> x.id);
+                bookingList: bookingList.map(x=> x.id)
             }
           },
         );
+        if(response.status !== 200){
+            throw new Error(`Failed to update reminders as sent for client ${client}`);
+        }
 
-        console.log(`Successfully fetched reminders for ${client}`);
+        console.log(`Successfully sent reminders for ${client}`);
 
       } catch (error) {
         console.error(`Error fetching reminders for ${client}:`, error.message);

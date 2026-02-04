@@ -8,6 +8,7 @@ const HttpClient = require("../utils/httpClient");
  */
 class AuthService {
   constructor() {
+    this.accessToken = null;
     this.baseUrl =
       process.env.API_BASE_URL || "https://editorapp-be.fly.dev/api";
     this.credentials = {
@@ -61,6 +62,7 @@ class AuthService {
       }
 
       console.log("Sign-in successful, access token obtained");
+      this.accessToken = accessToken;
       return accessToken;
     } catch (error) {
       console.error("Sign-in error:", error.message);
@@ -73,9 +75,11 @@ class AuthService {
    * @returns {Promise<Object>} Headers object with Authorization
    */
   async getAuthHeaders() {
-    const accessToken = await this.signIn();
+    if (!this.accessToken) {
+      this.accessToken = await this.signIn();
+    }
     return {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${this.accessToken}`,
       "Content-Type": "application/json",
     };
   }

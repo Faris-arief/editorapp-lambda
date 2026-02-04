@@ -14,11 +14,6 @@ exports.handler = async (event, context) => {
   try {
     const apiService = new ApiService();
 
-    // Sign in first to get access token
-    console.log("Signing in to get access token...");
-    const accessToken = await apiService.getAccessToken();
-    console.log("Successfully obtained access token");
-
     // Get reminders for each client
     const remindersData = {};
 
@@ -71,7 +66,7 @@ exports.handler = async (event, context) => {
 
             bookings.forEach(booking => {
               const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name
-              const bookingTime = moment.utc(bookings[0].startTime).tz(timeZone);
+              const bookingTime = moment.utc(booking.date).tz(timeZone);
               const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A"); 
               contactArray.push(personInCharge)
               dateArray.push(formattedDate)
@@ -82,7 +77,7 @@ exports.handler = async (event, context) => {
             const dateTemplate = `${distinctDates.join(' and')}`;
             const contactTemplate = `${distinctContacts.join(' and')}`;
 
-            const phoneNumberToUse = booking.phoneNumber.startsWith('0') ? `+6${booking.phoneNumber}` : `+${booking.phoneNumber}`;
+            const phoneNumberToUse = bookings[0].phoneNumber.startsWith('0') ? `+6${bookings[0].phoneNumber}` : `+${bookings[0].phoneNumber}`;
             requestBody[2] = salonName;
             requestBody[3] = dateTemplate;
             requestBody[4] = contactTemplate;

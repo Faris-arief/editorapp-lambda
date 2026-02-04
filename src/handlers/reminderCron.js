@@ -90,7 +90,7 @@ exports.handler = async (event, context) => {
         const response = await apiService.request(
           `https://editorapp-be.fly.dev/api/${client}/bookings/updateReminderSent`,
           {
-            method: "POST",
+            method: "PATCH",
             body: {
                 bookingList: bookingList.map(x=> x.id)
             }

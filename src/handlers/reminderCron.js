@@ -81,11 +81,12 @@ exports.handler = async (event, context) => {
             const dateTemplate = `${distinctDates.join(' and')}`;
             const contactTemplate = `${distinctContacts.join(' and')}`;
 
+            const phoneNumberToUse = booking.phoneNumber.startsWith('0') ? `+6${booking.phoneNumber}` : `+${booking.phoneNumber}`;
             requestBody[2] = salonName;
             requestBody[3] = dateTemplate;
             requestBody[4] = contactTemplate;
             requestBody[5] = phoneNumber;
-            await sendWhatsAppMessage(booking.phoneNumber, requestBody)
+            await sendWhatsAppMessage(phoneNumberToUse, requestBody)
         })
 
         await Promise.all(promisesToBeDone);

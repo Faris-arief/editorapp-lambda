@@ -1,6 +1,6 @@
 // Handler exports
-const { handler: reminderCronHandler } = require('./reminderCron');
+const { handler: reminderCronHandler } = require("./reminderCron");
 
 module.exports = {
-    reminderCronHandler
+  reminderCronHandler,
 };

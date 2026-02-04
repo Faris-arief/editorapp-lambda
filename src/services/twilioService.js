@@ -1,10 +1,10 @@
-require('dotenv').config();
-const twilio = require('twilio');
+require("dotenv").config();
+const twilio = require("twilio");
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const fromNumber = process.env.TWILIO_WHATSAPP_FROM;
-const templateId = 'HX95ef541de146404ce29cb5228ddee000'; // Example template SID
+const templateId = "HX95ef541de146404ce29cb5228ddee000"; // Example template SID
 
 const client = twilio(accountSid, authToken);
 
@@ -18,22 +18,21 @@ async function sendWhatsAppMessage(to, templateVars = null) {
 
     messageOptions.contentSid = templateId;
     if (templateVars) {
-    messageOptions.contentVariables = JSON.stringify(templateVars);
+      messageOptions.contentVariables = JSON.stringify(templateVars);
     }
-    
 
     const response = await client.messages.create(messageOptions);
 
-    console.log('Message sent successfully!');
-    console.log('Message SID:', response.sid);
-    console.log('Status:', response.status);
+    console.log("Message sent successfully!");
+    console.log("Message SID:", response.sid);
+    console.log("Status:", response.status);
     return response;
   } catch (error) {
-    console.error('Failed to send message:', error.message);
+    console.error("Failed to send message:", error.message);
     throw error;
   }
 }
-        
+
 module.exports = {
-    sendWhatsAppMessage
+  sendWhatsAppMessage,
 };

@@ -37,8 +37,13 @@ functions:
     timeout: 60
     events:
       - schedule:
+          rate: cron(0 2 * * ? *)
+          enabled: false
+          description: "Daily reminder at 10 AM GMT+8 (2 AM UTC)"
+      - schedule:
           rate: cron(0 12 * * ? *)
           enabled: false
+          description: "Daily reminder at 8 PM GMT+8 (12 PM UTC)"
 
 plugins:
   - serverless-offline

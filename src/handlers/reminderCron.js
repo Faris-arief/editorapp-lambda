@@ -38,9 +38,9 @@ exports.handler = async (event, context) => {
         const settingList = settingsResponse.data.data || [];
 
 
-        const timeZone = settingList.find(x=> x.id === 'timeZone')?.value || 'Asia/Kuala_Lumpur';
-        const salonName = settingList.find(x=> x.id === 'salonName')?.value || 'The Editor Salon';
-        const phoneNumber = settingList.find(x=> x.id === 'phoneNumber')?.value ?? '';
+        const timeZone = settingList.find(x=> x.id === "timeZone")?.value || "Asia/Kuala_Lumpur";
+        const salonName = settingList.find(x=> x.id === "salonName")?.value || "The Editor Salon";
+        const phoneNumber = settingList.find(x=> x.id === "phoneNumber")?.value ?? "";
 
         const bookingList = bookingResponse.data.data || [];
         const bookingMap = {};
@@ -54,36 +54,36 @@ exports.handler = async (event, context) => {
         });
 
         const promisesToBeDone = Object.keys(bookingMap).map(async x=> {
-            const bookings = bookingMap[x];
-            const requestBody = {};
-            const bookingCount = bookings.length;
-            if(bookingCount){
-              requestBody[1] = `${bookings[0].name}${bookingCount > 1 ? ` (${bookingCount})` : ''}`;
-            }
+          const bookings = bookingMap[x];
+          const requestBody = {};
+          const bookingCount = bookings.length;
+          if(bookingCount){
+            requestBody[1] = `${bookings[0].name}${bookingCount > 1 ? ` (${bookingCount})` : ""}`;
+          }
 
-            const dateArray = [];
-            const contactArray = [];
+          const dateArray = [];
+          const contactArray = [];
 
-            bookings.forEach(booking => {
-              const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name
-              const bookingTime = moment.utc(booking.date).tz(timeZone);
-              const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A"); 
-              contactArray.push(personInCharge)
-              dateArray.push(formattedDate)
-            })
+          bookings.forEach(booking => {
+            const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name;
+            const bookingTime = moment.utc(booking.date).tz(timeZone);
+            const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A");
+            contactArray.push(personInCharge);
+            dateArray.push(formattedDate);
+          });
 
-            distinctDates = [...new Set(dateArray)];
-            distinctContacts = [...new Set(contactArray)];
-            const dateTemplate = `${distinctDates.join(' and')}`;
-            const contactTemplate = `${distinctContacts.join(' and')}`;
+          const distinctDates = [...new Set(dateArray)];
+          const distinctContacts = [...new Set(contactArray)];
+          const dateTemplate = `${distinctDates.join(" and")}`;
+          const contactTemplate = `${distinctContacts.join(" and")}`;
 
-            const phoneNumberToUse = bookings[0].phoneNumber.startsWith('0') ? `+6${bookings[0].phoneNumber}` : `+${bookings[0].phoneNumber}`;
-            requestBody[2] = salonName;
-            requestBody[3] = dateTemplate;
-            requestBody[4] = contactTemplate;
-            requestBody[5] = phoneNumber;
-            await sendWhatsAppMessage(phoneNumberToUse, requestBody)
-        })
+          const phoneNumberToUse = bookings[0].phoneNumber.startsWith("0") ? `+6${bookings[0].phoneNumber}` : `+${bookings[0].phoneNumber}`;
+          requestBody[2] = salonName;
+          requestBody[3] = dateTemplate;
+          requestBody[4] = contactTemplate;
+          requestBody[5] = phoneNumber;
+          await sendWhatsAppMessage(phoneNumberToUse, requestBody);
+        });
 
         await Promise.all(promisesToBeDone);
 
@@ -92,12 +92,12 @@ exports.handler = async (event, context) => {
           {
             method: "PATCH",
             body: {
-                bookingList: bookingList.map(x=> x.id)
-            }
+              bookingList: bookingList.map(x=> x.id),
+            },
           },
         );
         if(response.status !== 200){
-            throw new Error(`Failed to update reminders as sent for client ${client}`);
+          throw new Error(`Failed to update reminders as sent for client ${client}`);
         }
 
         console.log(`Successfully sent reminders for ${client}`);
@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
 
     // Check if any client had errors
     const hasErrors = Object.values(remindersData).some(r => r.success === false);
-    
+
     return {
       statusCode: hasErrors ? 500 : 200,
       headers: {

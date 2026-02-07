@@ -41,6 +41,8 @@ exports.handler = async (event, context) => {
         const timeZone = settingList.find(x=> x.id === "timeZone")?.value || "Asia/Kuala_Lumpur";
         const salonName = settingList.find(x=> x.id === "salonName")?.value || "The Editor Salon";
         const phoneNumber = settingList.find(x=> x.id === "phoneNumber")?.value ?? "";
+        const walkInContactId = Number(settingList.find(x=> x.id === "walkInContactId")?.value ?? "-1");
+
 
         const bookingList = bookingResponse.data.data || [];
         const bookingMap = {};
@@ -65,7 +67,7 @@ exports.handler = async (event, context) => {
           const contactArray = [];
 
           bookings.forEach(booking => {
-            const personInCharge = booking.isWalkIn && !booking.contactId ? booking.stylistPreference : booking.contact.name;
+            const personInCharge = (booking.isWalkIn && !booking.contactId) || booking.contactId === walkInContactId ? booking.stylistPreference : booking.contact.name;
             const bookingTime = moment.utc(booking.date).tz(timeZone);
             const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A");
             contactArray.push(personInCharge);
@@ -74,8 +76,8 @@ exports.handler = async (event, context) => {
 
           const distinctDates = [...new Set(dateArray)];
           const distinctContacts = [...new Set(contactArray)];
-          const dateTemplate = `${distinctDates.join(" and")}`;
-          const contactTemplate = `${distinctContacts.join(" and")}`;
+          const dateTemplate = `${distinctDates.join(" and ")}`;
+          const contactTemplate = `${distinctContacts.join(" and ")}`;
 
           const phoneNumberToUse = bookings[0].phoneNumber.startsWith("0") ? `+6${bookings[0].phoneNumber}` : `+${bookings[0].phoneNumber}`;
           requestBody[2] = salonName;

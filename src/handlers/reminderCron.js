@@ -46,10 +46,10 @@ exports.handler = async (event, context) => {
         const bookingMap = {};
 
         bookingList.forEach((booking) => {
-          if (bookingMap[booking.id]) {
-            bookingMap[booking.id].push(booking);
+          if (bookingMap[booking.customerId]) {
+            bookingMap[booking.customerId].push(booking);
           } else {
-            bookingMap[booking.id] = [booking];
+            bookingMap[booking.customerId] = [booking];
           }
         });
 
@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
           const requestBody = {};
           const bookingCount = bookings.length;
           if(bookingCount){
-            requestBody[1] = `${bookings[0].name}${bookingCount > 1 ? ` (${bookingCount})` : ""}`;
+            requestBody[1] = `${bookings[0].name}${bookingCount > 1 ? ` (${bookingCount} pax)` : ""}`;
           }
 
           const dateArray = [];

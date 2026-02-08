@@ -117,14 +117,18 @@ exports.handler = async (event, context) => {
     // Check if any client had errors
     const hasErrors = Object.values(remindersData).some(r => r.success === false);
 
+    if (hasErrors) {
+      throw new Error("One or more clients failed to process reminders");
+    }
+
     return {
-      statusCode: hasErrors ? 500 : 200,
+      statusCode: 200,
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
-        message: hasErrors ? "Some reminders failed to send" : "ok",
+        message: "ok",
         timestamp: new Date().toISOString(),
         authenticated: true,
         clients: clients,
@@ -133,17 +137,6 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error("Error in reminders handler:", error.message);
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({
-        message: "Internal server error",
-        error: error.message,
-        timestamp: new Date().toISOString(),
-      }),
-    };
+    throw error;
   }
 };

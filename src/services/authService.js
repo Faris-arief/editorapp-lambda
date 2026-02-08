@@ -10,7 +10,7 @@ class AuthService {
   constructor() {
     this.accessToken = null;
     this.baseUrl =
-      process.env.API_BASE_URL || "https://editorapp-be.fly.dev/api";
+      process.env.API_BASE_URL || "https://a4efoh0v59.execute-api.ap-southeast-1.amazonaws.com/prod/api";
     this.credentials = {
       email: process.env.AUTH_EMAIL,
       password: process.env.AUTH_PASSWORD,

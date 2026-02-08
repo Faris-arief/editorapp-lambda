@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { sendWhatsAppMessage, ApiService } = require("../services");
 const moment = require("moment-timezone");
 
@@ -22,14 +23,14 @@ exports.handler = async (event, context) => {
         console.log(`Fetching reminders for client: ${client}`);
 
         const bookingResponse = await apiService.request(
-          `https://editorapp-be.fly.dev/api/${client}/bookings/remindersAvailable`,
+          `${process.env.API_BASE_URL}/${client}/bookings/remindersAvailable`,
           {
             method: "GET",
           },
         );
 
         const settingsResponse = await apiService.request(
-          `https://editorapp-be.fly.dev/api/${client}/settings`,
+          `${process.env.API_BASE_URL}/${client}/settings`,
           {
             method: "GET",
           },
@@ -90,7 +91,7 @@ exports.handler = async (event, context) => {
         await Promise.all(promisesToBeDone);
 
         const response = await apiService.request(
-          `https://editorapp-be.fly.dev/api/${client}/bookings/updateReminderSent`,
+          `${process.env.API_BASE_URL}/${client}/bookings/updateReminderSent`,
           {
             method: "PATCH",
             body: {

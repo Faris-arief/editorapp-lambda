@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
           const contactArray = [];
 
           bookings.forEach(booking => {
-            const personInCharge = (booking.isWalkIn && !booking.contactId) || booking.contactId === walkInContactId ? booking.stylistPreference : booking.contact.name;
+            const personInCharge = ((booking.isWalkIn && !booking.contactId) || (booking.contactId === walkInContactId)) ? (booking.stylistPreference ?? "No Stylist Preference") : booking.contact.name;
             const bookingTime = moment.utc(booking.date).tz(timeZone);
             const formattedDate = bookingTime.format("DD/MM/YYYY h:mm A");
             contactArray.push(personInCharge);

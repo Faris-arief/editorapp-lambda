@@ -46,6 +46,9 @@ exports.handler = async (event, context) => {
 
 
         const bookingList = bookingResponse.data.data || [];
+
+        const bookingReminded = [];
+        const bookingFailed = [];
         const bookingMap = {};
 
         bookingList.forEach((booking) => {
@@ -85,7 +88,14 @@ exports.handler = async (event, context) => {
           requestBody[3] = dateTemplate;
           requestBody[4] = contactTemplate;
           requestBody[5] = phoneNumber;
-          await sendWhatsAppMessage(phoneNumberToUse, requestBody);
+          try{
+            bookingReminded.push(...bookings);
+            await sendWhatsAppMessage(phoneNumberToUse, requestBody);
+          }catch(e){
+            bookingFailed.push(...bookings);
+            console.error("Error when sending whatsapp message", e);
+          }
+
         });
 
         await Promise.all(promisesToBeDone);
@@ -95,7 +105,7 @@ exports.handler = async (event, context) => {
           {
             method: "PATCH",
             body: {
-              bookingList: bookingList.map(x=> x.id),
+              bookingList: bookingReminded.map(x=> x.id),
             },
           },
         );
@@ -103,7 +113,7 @@ exports.handler = async (event, context) => {
           throw new Error(`Failed to update reminders as sent for client ${client}`);
         }
 
-        console.log(`Successfully sent reminders for ${client}`);
+        console.log(`Successfully sent reminders for ${client}, 'Several bookings failed to send;\nHere is a list of it: ${bookingFailed.map(x=> x.id).join(", ")}`);
 
       } catch (error) {
         console.error(`Error fetching reminders for ${client}:`, error.message);

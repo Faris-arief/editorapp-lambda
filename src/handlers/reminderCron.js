@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
           throw new Error(`Failed to update reminders as sent for client ${client}`);
         }
 
-        console.log(`Successfully sent reminders for ${client}, 'Several bookings failed to send;\nHere is a list of it: ${bookingFailed.map(x=> x.id).join(", ")}`);
+        console.log(`Successfully sent reminders for ${client}${bookingFailed.length ?  `, several bookings failed to send;\nHere is a list of it: ${bookingFailed.map(x=> x.id).join(", ")}` : ""}`);
 
       } catch (error) {
         console.error(`Error fetching reminders for ${client}:`, error.message);

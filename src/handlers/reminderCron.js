@@ -89,8 +89,9 @@ exports.handler = async (event, context) => {
           requestBody[4] = contactTemplate;
           requestBody[5] = phoneNumber;
           try{
-            bookingReminded.push(...bookings);
             await sendWhatsAppMessage(phoneNumberToUse, requestBody);
+            bookingReminded.push(...bookings);
+
           }catch(e){
             bookingFailed.push(...bookings);
             console.error("Error when sending whatsapp message", e);

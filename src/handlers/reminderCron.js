@@ -83,7 +83,8 @@ exports.handler = async (event, context) => {
           const dateTemplate = `${distinctDates.join(" and ")}`;
           const contactTemplate = `${distinctContacts.join(" and ")}`;
 
-          let phoneNumberToUse = ""
+          let phoneNumberToUse = "";
+
           if(bookings[0].phoneNumber.startsWith("0")){
             phoneNumberToUse = `+6${bookings[0].phoneNumber}`;
           }

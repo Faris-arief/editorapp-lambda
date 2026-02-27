@@ -83,7 +83,16 @@ exports.handler = async (event, context) => {
           const dateTemplate = `${distinctDates.join(" and ")}`;
           const contactTemplate = `${distinctContacts.join(" and ")}`;
 
-          const phoneNumberToUse = bookings[0].phoneNumber.startsWith("0") ? `+6${bookings[0].phoneNumber}` : `+${bookings[0].phoneNumber}`;
+          let phoneNumberToUse = ""
+          if(bookings[0].phoneNumber.startsWith("0")){
+            phoneNumberToUse = `+6${bookings[0].phoneNumber}`;
+          }
+          else if(bookings[0].phoneNumber.startsWith("+")){
+            phoneNumberToUse = `${bookings[0].phoneNumber}`;
+          }
+          else{
+            phoneNumberToUse =  `+${bookings[0].phoneNumber}`;
+          }
           requestBody[2] = salonName;
           requestBody[3] = dateTemplate;
           requestBody[4] = contactTemplate;

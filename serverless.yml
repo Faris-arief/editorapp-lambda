@@ -9,6 +9,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   memorySize: 256
   timeout: 60
+  logRetentionInDays: 7
   environment:
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}

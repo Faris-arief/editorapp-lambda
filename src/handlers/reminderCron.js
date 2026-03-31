@@ -43,6 +43,7 @@ exports.handler = async (event, context) => {
         const salonName = settingList.find(x=> x.id === "salonName")?.value || "The Editor Salon";
         const phoneNumber = settingList.find(x=> x.id === "phoneNumber")?.value ?? "";
         const walkInContactId = Number(settingList.find(x=> x.id === "walkInContactId")?.value ?? "-1");
+        const twilioTemplateSid = settingList.find(x=> x.id === "twilioTemplateSid")?.value ?? null;
 
 
         const bookingList = bookingResponse.data.data || [];
@@ -99,7 +100,7 @@ exports.handler = async (event, context) => {
           requestBody[4] = contactTemplate;
           requestBody[5] = phoneNumber;
           try{
-            await sendWhatsAppMessage(phoneNumberToUse, requestBody);
+            await sendWhatsAppMessage(phoneNumberToUse, requestBody, twilioTemplateSid);
             bookingReminded.push(...bookings);
 
           }catch(e){

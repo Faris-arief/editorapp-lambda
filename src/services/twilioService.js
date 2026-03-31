@@ -9,14 +9,14 @@ const templateId = "HX95ef541de146404ce29cb5228ddee000"; // Example template SID
 const client = twilio(accountSid, authToken);
 
 //TEMPALTE VARS EXAMPLE = {"1":"John","2":"123"}
-async function sendWhatsAppMessage(to, templateVars = null) {
+async function sendWhatsAppMessage(to, templateVars = null, templateIdOverride = null) {
   try {
     const messageOptions = {
       from: fromNumber,
       to: `whatsapp:${to}`,
     };
 
-    messageOptions.contentSid = templateId;
+    messageOptions.contentSid = templateIdOverride || templateId;
     if (templateVars) {
       messageOptions.contentVariables = JSON.stringify(templateVars);
     }
